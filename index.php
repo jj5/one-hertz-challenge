@@ -148,6 +148,7 @@ function handle_load() {
 <body>
   <main>
     <h1>One Hertz Challenge</h1>
+    <p>This is for judging the <a href="https://hackaday.io/contest/203248-one-hertz-challenge">One Hertz Challenge</a>.</p>
     <h2>Honorable Mention Categories</h2>
     <p><b>Timelords:</b> How precisely can you get that heartbeat? This category is for those who prefer to see a lot of zeroes after the decimal point.</p>
     <p><b>Ridiculous:</b> This category is for the least likely thing to do once per second. Accuracy is great, but absurdity is king here. Have Rube Goldberg dreams? Now you get to live them out.</p>
