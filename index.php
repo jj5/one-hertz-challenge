@@ -42,7 +42,6 @@ function process_csv( $csv_file, &$n ) {
       throw new RuntimeException("Unable to open file: $path");
   }
 
-  // If the CSV has a header row:
   $headers = fgetcsv($fh, 0, ',', '"', '\\'); // first line => headers
   if ($headers === false) {
       fclose($fh);
@@ -50,12 +49,7 @@ function process_csv( $csv_file, &$n ) {
   }
 
   while (($row = fgetcsv($fh, 0, ',', '"', '\\')) !== false) {
-      // skip empty lines
-      if ($row === [null] || count(array_filter($row, fn($c) => $c !== null && $c !== '')) === 0) {
-          continue;
-      }
       $assoc = array_combine($headers, $row);
-      // call your processing function
       $n++;
       process_row($assoc, $n);
   }
