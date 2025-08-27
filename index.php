@@ -115,14 +115,6 @@ function render_head() {
 <head>
   <title>One Hertz Challenge</title>
   <meta charset="utf-8">
-  <meta name="date" content="Wed, 27 Aug 2025 22:39:28 +1000">
-  <meta name="author" content="John Elliot V et al.">
-  <!--
-  <meta name="referrer" content="no-referrer">
-  <meta name="robots" content="noindex, nofollow">
-  <meta name="keywords" content="">
-  <meta name="description" content="">
-  -->
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
