@@ -14,11 +14,9 @@ function main() {
 
   }
 
-  //echo $csv_file;
-
   render_head();
 
-  echo "<table>\n";
+  echo "<table class='nice-table'>\n";
 
   $n = 0;
 
