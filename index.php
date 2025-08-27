@@ -117,16 +117,11 @@ function render_head() {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-
-  <!-- 2022-10-13 jj5 - SEE: https://en.wikipedia.org/wiki/Polyglot_markup -->
-
   <link href="/favicon.ico" rel="icon">
-
   <link
     rel="stylesheet"
     type="text/css"
     href="https://www.staticmagic.net/global/default.css?v=2025-08-27-223928">
-
   <script src="https://www.staticmagic.net/global/default.js?v=2025-08-27-223928"></script>
 
 <style>
