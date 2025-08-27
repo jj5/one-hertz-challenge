@@ -57,27 +57,9 @@ function process_csv( $csv_file, &$n ) {
       if ($row === [null] || count(array_filter($row, fn($c) => $c !== null && $c !== '')) === 0) {
           continue;
       }
-
-      // if number of fields matches, map header=>value
-      if (count($row) === count($headers)) {
-          $assoc = array_combine($headers, $row);
-      } else {
-          // handle row/column mismatch (you can pad/truncate or skip)
-          $assoc = [];
-          foreach ($row as $i => $val) {
-              $assoc[$headers[$i] ?? "col_$i"] = $val;
-          }
-      }
-
-      // process the row
-      // e.g. normalize and cast fields
-      $assoc['id'] = isset($assoc['id']) ? (int)$assoc['id'] : null;
-      $assoc['amount'] = isset($assoc['amount']) ? (float)str_replace(',', '', $assoc['amount']) : null;
-
+      $assoc = array_combine($headers, $row);
       // call your processing function
-
       $n++;
-
       process_row($assoc, $n);
   }
 
