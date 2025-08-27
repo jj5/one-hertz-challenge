@@ -20,7 +20,9 @@ function main() {
 
   echo "<table>\n";
 
-  process_csv( $csv_file );
+  $n = 0;
+
+  process_csv( $csv_file, $n );
 
   echo "</table>\n";
 
@@ -28,7 +30,7 @@ function main() {
 
 }
 
-function process_csv( $csv_file ) {
+function process_csv( $csv_file, &$n ) {
 
   $path = $csv_file;
 
@@ -73,19 +75,23 @@ function process_csv( $csv_file ) {
       $assoc['amount'] = isset($assoc['amount']) ? (float)str_replace(',', '', $assoc['amount']) : null;
 
       // call your processing function
-      process_row($assoc);
+
+      $n++;
+
+      process_row($assoc, $n);
   }
 
   fclose($fh);
 
 }
 
-function process_row(array $row): void {
+function process_row( array $row, $n ): void {
 
   $url = henc( $row[ 'URL' ] );
   $project = henc( $row[ 'Project Name' ] );
 
   echo "<tr>\n";
+  echo "<td>$n</td>\n";
   echo "<td><a href=\"$url\">$project</a></td>\n";
   echo "</tr>\n";
 
