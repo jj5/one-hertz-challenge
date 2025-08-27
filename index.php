@@ -148,6 +148,13 @@ function handle_load() {
 <body>
   <main>
     <h1>One Hertz Challenge</h1>
+    <h2>Honorable Mention Categories</h2>
+    <p><b>Timelords:</b> How precisely can you get that heartbeat? This category is for those who prefer to see a lot of zeroes after the decimal point.</p>
+    <p><b>Ridiculous:</b> This category is for the least likely thing to do once per second. Accuracy is great, but absurdity is king here. Have Rube Goldberg dreams? Now you get to live them out.</p>
+    <p><b>Clockwork:</b> It’s hard to mention time without thinking of timepieces. This category is for the clockmakers among you. If your clock ticks at a rate of one hertz, and you’re willing to show us the mechanism, you’re in.</p>
+    <p><b>Could Have Used a 555:</b> We knew you were going to say it anyway, so we made it an honorable mention category. If your One Hertz project gets its timing from the venerable triple-five, it belongs here.</p>
+
+    <h2>Submissions</h2>
     <p>Here are the list of submissions for the One Hertz Challenge:</p>
 
 <?php
