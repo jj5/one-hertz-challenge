@@ -16,11 +16,15 @@ function main() {
 
   //echo $csv_file;
 
+  render_head();
+
   echo "<table>\n";
 
   process_csv( $csv_file );
 
   echo "</table>\n";
+
+  render_foot();
 
 }
 
