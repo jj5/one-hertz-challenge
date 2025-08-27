@@ -62,7 +62,7 @@ function process_row( array $row, $n ): void {
   $project = henc( $row[ 'Project Name' ] );
 
   echo "<tr>\n";
-  echo "<td>$n</td>\n";
+  echo "<td class='right'>$n</td>\n";
   echo "<td><a href=\"$url\">$project</a></td>\n";
   echo "</tr>\n";
 
