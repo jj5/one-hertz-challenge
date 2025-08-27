@@ -49,9 +49,6 @@ function process_csv( $csv_file, &$n ) {
       throw new RuntimeException("Empty file or invalid CSV");
   }
 
-  // optional: clean BOM from first header (UTF-8 BOM)
-  $headers[0] = preg_replace('/^\x{FEFF}/u', '', $headers[0]);
-
   while (($row = fgetcsv($fh, 0, ',', '"', '\\')) !== false) {
       // skip empty lines
       if ($row === [null] || count(array_filter($row, fn($c) => $c !== null && $c !== '')) === 0) {
