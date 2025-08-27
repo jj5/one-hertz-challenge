@@ -1,3 +1,4 @@
 vendor
 config.php
 debug.php
+dat/
