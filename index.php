@@ -151,6 +151,7 @@ function handle_load() {
 <body>
   <main>
     <h1>One Hertz Challenge</h1>
+    <p>Here are the list of submissions for the One Hertz Challenge:</p>
 
   </main>
 <?php
