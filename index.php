@@ -141,4 +141,3 @@ function render_foot() {
 
 <?php
 }
-
