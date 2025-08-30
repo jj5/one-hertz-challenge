@@ -68,7 +68,7 @@ function process_row( array $row, $n ): void {
 
 }
 
-function henc( $string ) { return htmlspecialchars( $string ); }
+function henc( $string ) { return htmlspecialchars( strval($string) ); }
 
 function get_csv(string $dir): ?string {
     if (!is_dir($dir)) return null;
