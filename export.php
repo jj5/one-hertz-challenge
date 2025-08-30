@@ -42,13 +42,15 @@ function main() {
 
   fputcsv( $handle, $columns );
 
+  usort( $rows, fn( $a, $b ) => $a[ APP_INPUT_ID ] <=> $b[ APP_INPUT_ID ] );
+
   foreach ( $rows as $row ) {
 
     $line = [
       //$row[APP_INPUT_ID],
       $row[ APP_INPUT_PROJECT_NAME ],
       $row[ APP_INPUT_URL ],
-      $row[ APP_INPUT_RANK ],
+      $row[ APP_INPUT_RANK ] <= 10 ? $row[ APP_INPUT_RANK ] : '',
       $row[ APP_INPUT_NOTES ],
       $row[ APP_INPUT_TIMELORDS ] ? 'X' : '',
       $row[ APP_INPUT_RIDICULOUS ] ? 'X' : '',

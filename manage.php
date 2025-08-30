@@ -6,102 +6,81 @@ header('X-Content-Type-Options: nosniff');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'save') {
 
-  error_log( 'POST received: ' . json_encode($_POST) );
+  //error_log( 'POST received: ' . json_encode($_POST) );
 
-    // Save posted JSON data
-    $json = $_POST['data'] ?? '';
-    if ($json === '') {
+  // Save posted JSON data
+  $json = $_POST['data'] ?? '';
+  if ($json === '') {
+      http_response_code(400);
+      echo json_encode(['success' => false, 'message' => 'No data provided.']);
+      exit;
+  }
+
+  // Decode to validate and sanitize
+  $decoded = json_decode($json, true);
+  if (!is_array($decoded)) {
+      http_response_code(400);
+      echo json_encode(['success' => false, 'message' => 'Invalid JSON.']);
+      exit;
+  }
+
+  $clean = [];
+  $ids = [];
+  foreach ($decoded as $i => $row) {
+    // Basic required shape: id, url, project_name, rank, timelords, ridiculous, clockwork, could_have_used_a_555, notes
+    $id = isset($row['id']) ? (int)$row['id'] : null;
+    if ($id === null || $id < 0) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'No data provided.']);
+        echo json_encode(['success' => false, 'message' => "Row $i: invalid id."]);
         exit;
     }
-
-    // Decode to validate and sanitize
-    $decoded = json_decode($json, true);
-    if (!is_array($decoded)) {
+    if (in_array($id, $ids, true)) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'Invalid JSON.']);
+        echo json_encode(['success' => false, 'message' => "Duplicate id $id in row $i."]);
         exit;
     }
+    $ids[] = $id;
 
-    $clean = [];
-    $ids = [];
-    foreach ($decoded as $i => $row) {
-        // Basic required shape: id, url, project_name, rank, timelords, ridiculous, clockwork, could_have_used_a_555, notes
-        $id = isset($row['id']) ? (int)$row['id'] : null;
-        if ($id === null || $id < 0) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => "Row $i: invalid id."]);
-            exit;
-        }
-        if (in_array($id, $ids, true)) {
-            http_response_code(400);
-            echo json_encode(['success' => false, 'message' => "Duplicate id $id in row $i."]);
-            exit;
-        }
-        $ids[] = $id;
+    $url = isset($row['url']) ? trim((string)$row['url']) : '';
+    $project_name = isset($row['project_name']) ? trim((string)$row['project_name']) : '';
+    $rank = isset($row['rank']) ? (int)$row['rank'] : 0;
+    if ($rank < 0) $rank = 0;
+    $timelords = !empty($row['timelords']) ? true : false;
+    $ridiculous = !empty($row['ridiculous']) ? true : false;
+    $clockwork = !empty($row['clockwork']) ? true : false;
+    $could_have_used_a_555 = !empty($row['could_have_used_a_555']) ? true : false;
+    $notes = isset($row['notes']) ? trim((string)$row['notes']) : '';
 
-        $url = isset($row['url']) ? trim((string)$row['url']) : '';
-        $project_name = isset($row['project_name']) ? trim((string)$row['project_name']) : '';
-        $rank = isset($row['rank']) ? (int)$row['rank'] : 0;
-        if ($rank < 0) $rank = 0;
-        $timelords = !empty($row['timelords']) ? true : false;
-        $ridiculous = !empty($row['ridiculous']) ? true : false;
-        $clockwork = !empty($row['clockwork']) ? true : false;
-        $could_have_used_a_555 = !empty($row['could_have_used_a_555']) ? true : false;
-        $notes = isset($row['notes']) ? trim((string)$row['notes']) : '';
+    $clean[] = [
+        'id' => $id,
+        'url' => $url,
+        'project_name' => $project_name,
+        'rank' => $rank,
+        'timelords' => $timelords,
+        'ridiculous' => $ridiculous,
+        'clockwork' => $clockwork,
+        'could_have_used_a_555' => $could_have_used_a_555,
+        'notes' => $notes,
+    ];
+  }
 
-        $clean[] = [
-            'id' => $id,
-            'url' => $url,
-            'project_name' => $project_name,
-            'rank' => $rank,
-            'timelords' => $timelords,
-            'ridiculous' => $ridiculous,
-            'clockwork' => $clockwork,
-            'could_have_used_a_555' => $could_have_used_a_555,
-            'notes' => $notes,
-        ];
-    }
+  // Pretty-print JSON
+  $out = json_encode($clean, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+  if ($out === false) {
+      http_response_code(500);
+      echo json_encode(['success' => false, 'message' => 'Failed to encode JSON.']);
+      exit;
+  }
 
-    // Pretty-print JSON
-    $out = json_encode($clean, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-    if ($out === false) {
-        http_response_code(500);
-        echo json_encode(['success' => false, 'message' => 'Failed to encode JSON.']);
-        exit;
-    }
+  if (file_put_contents( APP_STATE_PATH, $out) === false) {
+      http_response_code(500);
+      echo json_encode(['success' => false, 'message' => 'Failed to write JSON file.']);
+      exit;
+  }
 
-    if ( false ) {
+  echo json_encode(['success' => true, 'message' => 'Saved successfully.', 'file' => basename(APP_STATE_PATH)]);
+  exit;
 
-      // Atomic write: write to temp then rename
-      $tmp = APP_STATE_PATH . '.tmp';
-      if (file_put_contents($tmp, $out) === false) {
-          http_response_code(500);
-          echo json_encode(['success' => false, 'message' => 'Failed to write temp file.']);
-          exit;
-      }
-      if (!rename($tmp, APP_STATE_PATH)) {
-          // try to remove tmp
-          @unlink($tmp);
-          http_response_code(500);
-          echo json_encode(['success' => false, 'message' => 'Failed to move temp file to data file.']);
-          exit;
-      }
-
-    }
-    else {
-
-      if (file_put_contents( APP_STATE_PATH, $out) === false) {
-          http_response_code(500);
-          echo json_encode(['success' => false, 'message' => 'Failed to write JSON file.']);
-          exit;
-      }
-
-    }
-
-    echo json_encode(['success' => true, 'message' => 'Saved successfully.', 'file' => basename(APP_STATE_PATH)]);
-    exit;
 }
 
 // Otherwise render the page and load existing data

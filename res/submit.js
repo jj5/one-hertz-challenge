@@ -1,5 +1,5 @@
 (function(){
-  const addRowBtn = document.getElementById('addRowBtn');
+  //const addRowBtn = document.getElementById('addRowBtn');
   const saveBtn = document.getElementById('saveBtn');
   const loadBtn = document.getElementById('loadBtn');
   const dataTable = document.getElementById('dataTable').querySelector('tbody');
@@ -80,9 +80,11 @@
     });
   });
 
+  /*
   addRowBtn.addEventListener('click', function(){
     createRow({});
   });
+  */
 
   saveBtn.addEventListener('click', function(){
     const data = gatherData();
