@@ -50,6 +50,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $clockwork = !empty($row['clockwork']) ? true : false;
     $could_have_used_a_555 = !empty($row['could_have_used_a_555']) ? true : false;
     $notes = isset($row['notes']) ? trim((string)$row['notes']) : '';
+    $views = isset($row['views']) ? trim((string)$row['views']) : '';
+    $comments = isset($row['comments']) ? trim((string)$row['comments']) : '';
+    $followers = isset($row['followers']) ? trim((string)$row['followers']) : '';
+    $likes = isset($row['likes']) ? trim((string)$row['likes']) : '';
+    $has_schematics = !empty($row['has_schematics']) ? true : false;
+    $has_code = !empty($row['has_code']) ? true : false;
 
     $clean[] = [
         'id' => $id,
@@ -61,6 +67,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         'clockwork' => $clockwork,
         'could_have_used_a_555' => $could_have_used_a_555,
         'notes' => $notes,
+        'views' => $views,
+        'comments' => $comments,
+        'followers' => $followers,
+        'likes' => $likes,
+        'has_schematics' => $has_schematics,
+        'has_code' => $has_code,
     ];
   }
 
@@ -93,6 +105,29 @@ if (is_file(APP_STATE_PATH)) {
     }
 }
 
+for ( $i = 0; $i < count($rows); $i++ ) {
+
+  $row = $rows[$i];
+
+  $url = isset($row['url']) ? trim((string)$row['url']) : '';
+
+  if ($url === '') {
+      continue;
+  }
+
+  // 2025-08-31 jj5 - ignore this project, the View Count is not available
+  if ( $url === 'https://hackaday.io/project/203845' ) { continue; }
+
+  // Fetch stats from Hackaday.io
+  // This is a bit slow, so only do it if we don't already have stats
+  if ( $row['views'] === '' || $row['comments'] === '' || $row['followers'] === '' || $row['likes'] === '' ) {
+      $stats = get_hackaday_io_stats( $url );
+      $rows[$i] = array_merge( $rows[$i], $stats );
+      // Slight delay to avoid hammering the server
+      usleep(200000); // 200ms
+  }
+}
+
 // helper for output escaping
 function h($s) { return htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); }
 
@@ -103,7 +138,13 @@ function h($s) { return htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Table Manager — JSON persistence</title>
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="https://www.staticmagic.net/global/default.css?v=2025-08-27-223928">
+<script src="https://www.staticmagic.net/global/default.js?v=2025-08-27-223928"></script>
 <style>
+html { max-width: unset;}
   body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; margin:20px}
   table{border-collapse:collapse;}
   th,td{border:1px solid #ddd;padding:6px 8px;text-align:left;vertical-align:top}
@@ -139,7 +180,7 @@ function h($s) { return htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE
 
 
 <form id="tableForm" onsubmit="return false;">
-<table id="dataTable" aria-describedby="tableDescription">
+<table id="dataTable" aria-describedby="tableDescription" class="sortable">
   <caption id="tableDescription" class="small" style="caption-side:bottom;text-align:left">Edit cells and click Save. IDs are numeric and preserved.</caption>
   <thead>
     <tr>
@@ -152,6 +193,12 @@ function h($s) { return htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE
       <th class="clockwork-cell">Clockwork</th>
       <th class="could-have-used-a-555-cell">Could Have Used a 555</th>
       <th>Notes</th>
+      <th>Views</th>
+      <th>Comments</th>
+      <th>Followers</th>
+      <th>Likes</th>
+      <th>Has Schematics</th>
+      <th>Has Code</th>
     </tr>
   </thead>
   <tbody>
@@ -171,6 +218,12 @@ function h($s) { return htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE
         $clockwork = !empty($row['clockwork']);
         $could_have_used_a_555 = !empty($row['could_have_used_a_555']);
         $notes = $row['notes'] ?? '';
+        $views = $row['views'] ?? '';
+        $comments = $row['comments'] ?? '';
+        $followers = $row['followers'] ?? '';
+        $likes = $row['likes'] ?? '';
+        $has_schematics = !empty($row['has_schematics']);
+        $has_code = !empty($row['has_code']);
   ?>
     <tr>
       <td class="id-cell row-id"><?php echo h($id); ?></td>
@@ -178,11 +231,17 @@ function h($s) { return htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE
       <td class="rank-cell">
         <input type="text" class="row-rank" value="<?php echo h($rank); ?>" />
       </td>
-      <td class="timelords-cell"><input type="checkbox" class="row-timelords" <?php if ($timelords) echo 'checked'; ?> /></td>
-      <td class="ridiculous-cell"><input type="checkbox" class="row-ridiculous" <?php if ($ridiculous) echo 'checked'; ?> /></td>
-      <td class="clockwork-cell"><input type="checkbox" class="row-clockwork" <?php if ($clockwork) echo 'checked'; ?> /></td>
-      <td class="could-have-used-a-555-cell"><input type="checkbox" class="row-could-have-used-a-555" <?php if ($could_have_used_a_555) echo 'checked'; ?> /></td>
+      <td class="timelords-cell"><label><input type="checkbox" class="row-timelords" <?php if ($timelords) echo 'checked'; ?> /> Timelords</label></td>
+      <td class="ridiculous-cell"><label><input type="checkbox" class="row-ridiculous" <?php if ($ridiculous) echo 'checked'; ?> /> Ridiculous</label></td>
+      <td class="clockwork-cell"><label><input type="checkbox" class="row-clockwork" <?php if ($clockwork) echo 'checked'; ?> /> Clockwork</label></td>
+      <td class="could-have-used-a-555-cell"><label><input type="checkbox" class="row-could-have-used-a-555" <?php if ($could_have_used_a_555) echo 'checked'; ?> /> Could Have Used a 555</label></td>
       <td><textarea class="row-notes" rows="1"><?php echo h($notes); ?></textarea></td>
+      <td class="views-cell"><input type="text" class="row-views" value="<?php echo h($views); ?>" /></td>
+      <td class="comments-cell"><input type="text" class="row-comments" value="<?php echo h($comments); ?>" /></td>
+      <td class="followers-cell"><input type="text" class="row-followers" value="<?php echo h($followers); ?>" /></td>
+      <td class="likes-cell"><input type="text" class="row-likes" value="<?php echo h($likes); ?>" /></td>
+      <td class="has-schematics-cell"><label><input type="checkbox" class="row-has-schematics" <?php if ($has_schematics) echo 'checked'; ?> /> Has Schematics</label></td>
+      <td class="has-code-cell"><label><input type="checkbox" class="row-has-code" <?php if ($has_code) echo 'checked'; ?> /> Has Code</label></td>
     </tr>
   <?php
       endforeach;

@@ -51,7 +51,7 @@ function main() {
       $row[ APP_INPUT_PROJECT_NAME ],
       $row[ APP_INPUT_URL ],
       $row[ APP_INPUT_RANK ] <= 10 ? $row[ APP_INPUT_RANK ] : '',
-      $row[ APP_INPUT_NOTES ],
+      get_notes( $row ),
       $row[ APP_INPUT_TIMELORDS ] ? 'X' : '',
       $row[ APP_INPUT_RIDICULOUS ] ? 'X' : '',
       $row[ APP_INPUT_CLOCKWORK ] ? 'X' : '',
@@ -63,5 +63,25 @@ function main() {
   }
 
   fclose( $handle );
+
+}
+
+function get_notes( array $row ): string {
+
+  $result = [];
+
+  if ( $row[ APP_INPUT_HAS_SCHEMATICS ] ) {
+    $result[] = 'has schematics';
+  }
+
+  if ( $row[ APP_INPUT_HAS_CODE ] ) {
+    $result[] = 'has code';
+  }
+
+  if ( $row[ APP_INPUT_NOTES ] ) {
+    $result[] = $row[ APP_INPUT_NOTES ];
+  }
+
+  return implode( '; ', $result );
 
 }

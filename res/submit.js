@@ -1,5 +1,4 @@
 (function(){
-  //const addRowBtn = document.getElementById('addRowBtn');
   const saveBtn = document.getElementById('saveBtn');
   const loadBtn = document.getElementById('loadBtn');
   const dataTable = document.getElementById('dataTable').querySelector('tbody');
@@ -21,30 +20,6 @@
       if (!isNaN(v) && v > max) max = v;
     });
     return max + 1;
-  }
-
-  function createRow(data = {}) {
-    const id = (typeof data.id !== 'undefined') ? data.id : getNextId();
-    const name = data.name || '';
-    const rank = (typeof data.rank !== 'undefined') ? data.rank : 1;
-    const is_enabled = !!data.is_enabled;
-    const notes = data.notes || '';
-
-    const tr = document.createElement('tr');
-
-    tr.innerHTML = `
-      <td class="id-cell"><input type="number" class="row-id" value="${id}" readonly /></td>
-      <td><input type="text" class="row-name" value="${escapeHtml(name)}" /></td>
-      <td class="rank-cell">
-        ${createRankSelect(rank)}
-      </td>
-      <td class="enabled-cell"><input type="checkbox" class="row-enabled" ${is_enabled ? 'checked' : ''} /></td>
-      <td><textarea class="row-notes" rows="1">${escapeHtml(notes)}</textarea></td>
-      <td class="actions-cell"><button type="button" class="deleteRowBtn">Delete</button></td>
-    `;
-    dataTable.appendChild(tr);
-    attachRowListeners(tr);
-    return tr;
   }
 
   function createRankSelect(selected) {
@@ -145,6 +120,12 @@
       const couldHaveUsed555El = tr.querySelector('.row-could-have-used-a-555');
 
       const notesEl = tr.querySelector('.row-notes');
+      const viewsEl = tr.querySelector('.row-views');
+      const commentsEl = tr.querySelector('.row-comments');
+      const followersEl = tr.querySelector('.row-followers');
+      const likesEl = tr.querySelector('.row-likes');
+      const hasSchematicsEl = tr.querySelector('.row-has-schematics');
+      const hasCodeEl = tr.querySelector('.row-has-code');
 
       if (!idEl) {
         console.log( 'missing ID element' );
@@ -168,7 +149,13 @@
         ridiculous: !!(ridiculousEl && ridiculousEl.checked),
         clockwork: !!(clockworkEl && clockworkEl.checked),
         could_have_used_a_555: !!(couldHaveUsed555El && couldHaveUsed555El.checked),
-        notes: notesEl ? notesEl.value.trim() : ''
+        notes: notesEl ? notesEl.value.trim() : '',
+        views: viewsEl ? viewsEl.value.trim() : '',
+        comments: commentsEl ? commentsEl.value.trim() : '',
+        followers: followersEl ? followersEl.value.trim() : '',
+        likes: likesEl ? likesEl.value.trim() : '',
+        has_schematics: !!(hasSchematicsEl && hasSchematicsEl.checked),
+        has_code: !!(hasCodeEl && hasCodeEl.checked),
       });
     }
     return rows;
