@@ -147,6 +147,7 @@ function h($s) { return htmlspecialchars((string)$s, ENT_QUOTES | ENT_SUBSTITUTE
 html { max-width: unset;}
   body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; margin:20px}
   table{border-collapse:collapse;}
+  thead th { text-align: center;}
   th,td{border:1px solid #ddd;padding:6px 8px;text-align:left;vertical-align:top}
   th{background:#f3f3f3}
   input[type="text"], select, textarea {width:100%;box-sizing:border-box}
@@ -180,7 +181,7 @@ html { max-width: unset;}
 
 
 <form id="tableForm" onsubmit="return false;">
-<table id="dataTable" aria-describedby="tableDescription" class="sortable">
+<table id="dataTable" aria-describedby="tableDescription" class="nice-table sortable">
   <caption id="tableDescription" class="small" style="caption-side:bottom;text-align:left">Edit cells and click Save. IDs are numeric and preserved.</caption>
   <thead>
     <tr>
